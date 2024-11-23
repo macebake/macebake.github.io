@@ -13,7 +13,7 @@ body {
 
 .container {
     max-width: 600px;
-    margin: 20px auto;
+    margin: 120px auto;
     width: 100%;
     padding: 0 12px;
     box-sizing: border-box;
@@ -59,18 +59,18 @@ body {
 }
 
 .main-links {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin: 20px auto;
+    display: flex;
+    margin: 10px auto;
     max-width: 400px;
     padding: 0 10px;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .main-links a {
     color: #455a64;
     text-decoration: none;
-    padding: 8px 12px;
+    padding: 8px 24px;
     transition: color 0.3s;
     min-width: 44px;
     min-height: 44px;
