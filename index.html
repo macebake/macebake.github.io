@@ -3,150 +3,7 @@
 <head>
     <title>macey: hey</title>
     <link rel="icon" href="assets/moon.ico" type="image/x-icon">
-    <style>
-        body {
-            background-color: #d7ccc8;
-            color: #4a4a4a;
-            font-family: monospace;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 80px auto; /* Moved down */
-        }
-
-        .chat-container {
-            font-size: 18px;
-            margin-bottom: 50px;
-            text-align: left;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .chat-line {
-            margin-bottom: 10px;
-            opacity: 0;
-            transition: opacity 0.1s ease;
-        }
-
-        .chat-line.visible {
-            opacity: 1;
-        }
-
-        .timestamp {
-            color: #777;
-        }
-
-        .cursor {
-            display: inline-block;
-            width: 6px;
-            height: 18px;
-            background-color: #4a4a4a;
-            margin-left: 4px;
-            vertical-align: middle;
-            animation: blink 1s step-end infinite;
-        }
-
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-
-        .main-links {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin: 30px 0;
-            font-size: 15px;
-        }
-
-        .main-links a {
-            color: #455a64;
-            text-decoration: none;
-            padding: 4px 8px;
-            transition: color 0.3s;
-        }
-
-        .main-links a:hover {
-            color: #1c313a;
-        }
-
-        .mode-toggle {
-            margin: 25px 0;
-        }
-
-        .mode-toggle button {
-            background: #455a64;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 14px;
-        }
-
-        .mode-toggle button:hover {
-            background: #1c313a;
-        }
-
-        .counter {
-            font-family: "Courier New", monospace;
-            background: #455a64;
-            color: #d7ccc8;
-            padding: 4px 8px;
-            display: inline-block;
-            margin: 15px 0;
-            font-size: 14px;
-        }
-
-        .social-links {
-            margin-top: 40px;
-            padding-top: 15px;
-            border-top: 1px solid #455a64;
-            font-size: 13px;
-        }
-
-        .social-links a {
-            color: #455a64;
-            text-decoration: none;
-            margin: 0 12px;
-        }
-
-        .social-links a:hover {
-            text-decoration: underline;
-        }
-
-        .typing-indicator {
-            font-size: 14px;
-            color: #4a4a4a;
-            opacity: 0;
-            transition: opacity 0.3s;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-        }
-
-        .typing-indicator.visible {
-            opacity: 1;
-        }
-
-        .dot {
-            animation: blink 1s steps(1, end) infinite;
-            margin-left: 3px;
-        }
-
-        .dot:nth-child(2) {
-            animation-delay: 0.3s;
-        }
-
-        .dot:nth-child(3) {
-            animation-delay: 0.6s;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -166,8 +23,9 @@
         <div class="main-links">
             <a href="https://macebake.github.io/die">🎲 die</a>
             <a href="https://macebake.github.io/eyes">🧿 eyes</a>
-            <a href="https://macebake.github.io/doors">🚪 monty hall</a>
+            <a href="https://macebake.github.io/doors">🚪 doors</a>
             <a href="https://docs.google.com/spreadsheets/d/1w0pJMozN3VxkUkayMVujJqXDNQjZL_XedOQKWH41jeQ/edit?usp=sharing">🎨 mona</a>
+            <a href="https://macebake.github.io/keyboard-piano">🎹 piano</a>
             <a href="">📜 blog [soon]</a>
         </div>
 
