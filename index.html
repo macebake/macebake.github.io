@@ -26,12 +26,14 @@
             <a href="https://macebake.github.io/doors">🚪 doors</a>
             <a href="https://docs.google.com/spreadsheets/d/1w0pJMozN3VxkUkayMVujJqXDNQjZL_XedOQKWH41jeQ/edit?usp=sharing">🎨 mona</a>
             <a href="https://macebake.github.io/keyboard-piano">🎹 piano</a>
+            <a href="https://github.com/macebake/wolves" target="_blank">🐺 wolves</a>
+            <a href="https://github.com/macebake/split-steal" target="_blank">⚔️ split-steal</a>
         </div>
 
         <div class="social-links">
             <a href="https://x.com/macebake" target="_blank"><img src="assets/x.svg" alt="x" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></a>
             <a href="https://www.linkedin.com/in/maceybaker/" target="_blank"><img src="assets/li.svg" alt="LI" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></a>
-            <a href="https://bsky.app/profile/macebake.bsky.social" target="_blank"><img src="assets/bsky.svg" alt="bksy" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></a>
+            <a href="#" id="email-link" onclick="copyEmail(event)"><img src="assets/email.svg" alt="email" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></a>
         </div>
     </div>
 
@@ -101,6 +103,48 @@
             setTimeout(() => {
                 typingIndicator.classList.remove("visible");
             }, duration);
+        }
+
+        // Email copy functionality
+        function copyEmail(event) {
+            event.preventDefault();
+            const email = 'macebake@gmail.com';
+            navigator.clipboard.writeText(email).then(() => {
+                showNotification('copied email to clipboard', event.target.closest('a'));
+            }).catch(err => {
+                console.error('Failed to copy email: ', err);
+                showNotification('failed to copy email', event.target.closest('a'));
+            });
+        }
+
+        // Show notification
+        function showNotification(message, targetElement) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Position over the target element
+            if (targetElement) {
+                const rect = targetElement.getBoundingClientRect();
+                notification.style.position = 'fixed';
+                notification.style.left = `${rect.left + rect.width / 2}px`;
+                notification.style.top = `${rect.top - 40}px`;
+                notification.style.transform = 'translateX(-50%)';
+            }
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 2000);
         }
 
     </script>
