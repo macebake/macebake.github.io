@@ -1,153 +1,59 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>macey: hey</title>
-    <link rel="icon" href="assets/star.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
-<body>
-    <div class="container">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skywatch '98</title>
+    <link rel="stylesheet" href="./styles.css?v=chat-ui-3" />
+  </head>
+  <body>
+    <main class="shell">
+      <canvas
+        id="sky-canvas"
+        class="sky-canvas"
+        aria-label="Retro-styled view of the sky from the grass while planes pass overhead"
+      ></canvas>
+      <div class="grain"></div>
+      <div class="scanlines"></div>
+      <div class="bloom"></div>
+
+      <section class="ui-panel">
         <div class="chat-container">
-            <div class="chat-line visible">
-                <span class="timestamp"></span> macey: hey<div class="cursor" id="cursor1"></div>
-            </div>
-            <div class="chat-line">
-                <span class="timestamp"></span> macey: nice to see you<div class="cursor" id="cursor2"></div>
-            </div>
-            <div class="chat-line">
-                <span class="timestamp"></span> macey: have a look 🤠<div class="cursor" id="cursor3"></div>
-            </div>
-            <div class="typing-indicator" id="typing-indicator">macey is typing<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
-        </div>
-        
-        <div class="main-links">
-            <a href="https://macebake.github.io/die">🎲 die</a>
-            <a href="https://macebake.github.io/eyes">🧿 eyes</a>
-            <a href="https://macebake.github.io/doors">🚪 doors</a>
-            <a href="https://docs.google.com/spreadsheets/d/1w0pJMozN3VxkUkayMVujJqXDNQjZL_XedOQKWH41jeQ/edit?usp=sharing">🎨 mona</a>
-            <a href="https://macebake.github.io/keyboard-piano">🎹 piano</a>
-            <a href="https://github.com/macebake/wolves" target="_blank">🐺 wolves</a>
-            <a href="https://github.com/macebake/split-steal" target="_blank">⚔️ split-steal</a>
+          <div class="chat-line visible">
+            <span class="timestamp"></span> macey: hey<div class="cursor" id="cursor1"></div>
+          </div>
+          <div class="chat-line">
+            <span class="timestamp"></span> macey: nice to see you<div class="cursor" id="cursor2"></div>
+          </div>
+          <div class="chat-line">
+            <span class="timestamp"></span> macey: have a look around 🤠<div class="cursor" id="cursor3"></div>
+          </div>
+          <div class="typing-indicator" id="typing-indicator">macey is typing<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
         </div>
 
-        <div class="social-links">
-            <a href="https://x.com/macebake" target="_blank"><img src="assets/x.svg" alt="x" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></a>
-            <a href="https://www.linkedin.com/in/maceybaker/" target="_blank"><img src="assets/li.svg" alt="LI" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></a>
-            <a href="#" id="email-link" onclick="copyEmail(event)"><img src="assets/email.svg" alt="email" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></a>
+        <div class="controls-row">
+          <div class="social-links">
+            <a href="https://x.com/macebake" target="_blank" rel="noreferrer" aria-label="x">
+              <img src="./assets/ui/x.svg" alt="" />
+            </a>
+            <a href="https://www.linkedin.com/in/maceybaker/" target="_blank" rel="noreferrer" aria-label="linkedin">
+              <img src="./assets/ui/li.svg" alt="" />
+            </a>
+            <a href="#" id="email-link" aria-label="email">
+              <img src="./assets/ui/email.svg" alt="" />
+            </a>
+          </div>
+
+          <label class="toggle-row" for="show-all-links">
+            <input type="checkbox" id="show-all-links" />
+            <span>show all links</span>
+          </label>
         </div>
-    </div>
+      </section>
 
-    <script>
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.querySelectorAll('.timestamp').forEach(el => {
-                el.textContent = `[${hours}:${minutes}]`;
-            });
-        }
-        
-        updateTime();
-        setInterval(updateTime, 60000 * 5);
+      <nav class="link-strip" id="link-strip" aria-label="Site links"></nav>
+    </main>
 
-        // Show messages with delay and move cursor
-        const messages = document.querySelectorAll('.chat-line');
-        const cursors = document.querySelectorAll('.cursor');
-        
-        // Hide all cursors except first
-        cursors.forEach((cursor, index) => {
-            if (index > 0) cursor.style.display = 'none';
-        });
-
-        // Delays for messages
-        const delays = [2000, 3000, 4000, 6000];
-        const randomDelay = delays[Math.floor(Math.random() * delays.length)];
-
-        // Show messages with delay and move cursor as before
-        messages.forEach((msg, index) => {
-            if (index === 0) return; // Skip the first message
-
-            // Show typing indicator before each new message appears
-            setTimeout(() => {
-                // Show typing indicator and then hide it just before the message shows
-                showTypingIndicator();
-
-                // Show the actual message after the typing indicator has been hidden
-                setTimeout(() => {
-                    // Hide typing indicator shortly before showing the message
-                    document.getElementById("typing-indicator").classList.remove("visible");
-
-                    // Hide the previous cursor
-                    if (index > 0) cursors[index - 1].style.display = 'none';
-
-                    // Show the new message and its cursor
-                    msg.classList.add('visible');
-                    cursors[index].style.display = 'inline-block';
-                }, 1000); // Adjust this delay for exact timing control
-            }, index * randomDelay);
-        });
-
-        // After all messages are displayed, occasionally show typing indicator
-        setTimeout(() => {
-            setInterval(() => {
-                showTypingIndicator();
-            }, Math.random() * 8000 + 5000); // Random interval between 5s and 13s
-        }, messages.length * randomDelay);
-
-        // Function to show and hide typing indicator
-        function showTypingIndicator(duration = 1000) {
-            const typingIndicator = document.getElementById("typing-indicator");
-            typingIndicator.classList.add("visible");
-
-            // Hide typing indicator after the specified duration
-            setTimeout(() => {
-                typingIndicator.classList.remove("visible");
-            }, duration);
-        }
-
-        // Email copy functionality
-        function copyEmail(event) {
-            event.preventDefault();
-            const email = 'macebake@gmail.com';
-            navigator.clipboard.writeText(email).then(() => {
-                showNotification('copied email to clipboard', event.target.closest('a'));
-            }).catch(err => {
-                console.error('Failed to copy email: ', err);
-                showNotification('failed to copy email', event.target.closest('a'));
-            });
-        }
-
-        // Show notification
-        function showNotification(message, targetElement) {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            // Position over the target element
-            if (targetElement) {
-                const rect = targetElement.getBoundingClientRect();
-                notification.style.position = 'fixed';
-                notification.style.left = `${rect.left + rect.width / 2}px`;
-                notification.style.top = `${rect.top - 40}px`;
-                notification.style.transform = 'translateX(-50%)';
-            }
-
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 2000);
-        }
-
-    </script>
-
-</body>
+    <script src="./script.js?v=chat-ui-13"></script>
+  </body>
 </html>
