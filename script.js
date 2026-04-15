@@ -51,7 +51,7 @@ const BLOG_POSTS = [
   { title: "Teaching MCP Servers New Tricks: Challenges in Tool Discovery", url: "https://tessl.io/blog/teaching-mcp-servers-new-tricks/", date: "2025-07-02" },
 ];
 const flights = [];
-const FLIGHT_COUNT = 3;
+const FLIGHT_COUNT = 4;
 let started = false;
 let lastTime = 0;
 let simulationTime = 0;
@@ -106,7 +106,7 @@ function createFlight(index = 0) {
   const dy = end.y - start.y;
   const heading = Math.atan2(dy, dx) + Math.PI / 2;
   const baseScale = rand(0.05, 0.11);
-  const duration = rand(18000, 30000);
+  const duration = rand(24000, 36000);
   const wobble = rand(0.002, 0.008);
 
   return {
@@ -120,7 +120,7 @@ function createFlight(index = 0) {
     wobble,
     wobblePhase: rand(0, Math.PI * 2),
     heading,
-    startedAt: lastTime + 350 + index * rand(900, 1800),
+    startedAt: lastTime + 450 + index * rand(1200, 2400),
   };
 }
 
@@ -257,7 +257,7 @@ function drawPlanes(time) {
 
     if (progress >= 1) {
       flights[index] = createFlight(index);
-      flights[index].startedAt = time + rand(600, 2200);
+      flights[index].startedAt = time + rand(900, 2600);
     }
   });
 }
