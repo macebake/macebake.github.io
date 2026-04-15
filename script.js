@@ -5,8 +5,13 @@ const showAllLinksCheckbox = document.getElementById("show-all-links");
 const emailLink = document.getElementById("email-link");
 const blogToggle = document.getElementById("blog-toggle");
 const blogPanel = document.getElementById("blog-panel");
+const blogPanelTitle = document.getElementById("blog-panel-title");
 const blogTree = document.getElementById("blog-tree");
+const blogArchiveView = document.getElementById("blog-archive-view");
+const blogDetailView = document.getElementById("blog-detail-view");
+const blogDetailContent = document.getElementById("blog-detail-content");
 const blogClose = document.getElementById("blog-close");
+const blogBack = document.getElementById("blog-back");
 const sourceImage = new Image();
 sourceImage.src = "./assets/compressionsky.png?v=2";
 const planeImage = new Image();
@@ -45,7 +50,7 @@ const BLOG_POSTS = [
   { title: "Teaching MCP Servers New Tricks: Challenges in Tool Discovery", url: "https://tessl.io/blog/teaching-mcp-servers-new-tricks/", date: "2025-07-02" },
 ];
 const flights = [];
-const FLIGHT_COUNT = NAV_ITEMS.length;
+const FLIGHT_COUNT = 3;
 let started = false;
 let lastTime = 0;
 let simulationTime = 0;
@@ -53,6 +58,7 @@ let lastFrameStamp = 0;
 let paused = false;
 let hoveredFlightIndex = -1;
 let renderedFlights = [];
+let currentLocalPost = null;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -99,11 +105,11 @@ function createFlight(index = 0) {
   const dy = end.y - start.y;
   const heading = Math.atan2(dy, dx) + Math.PI / 2;
   const baseScale = rand(0.05, 0.11);
-  const duration = rand(24000, 42000);
+  const duration = rand(18000, 30000);
   const wobble = rand(0.002, 0.008);
 
   return {
-    item: NAV_ITEMS[index % NAV_ITEMS.length],
+    item: NAV_ITEMS[Math.floor(Math.random() * NAV_ITEMS.length)],
     startX: start.x,
     startY: start.y,
     endX: end.x,
@@ -113,7 +119,7 @@ function createFlight(index = 0) {
     wobble,
     wobblePhase: rand(0, Math.PI * 2),
     heading,
-    startedAt: lastTime + index * rand(2200, 4800),
+    startedAt: lastTime + 350 + index * rand(900, 1800),
   };
 }
 
@@ -250,7 +256,7 @@ function drawPlanes(time) {
 
     if (progress >= 1) {
       flights[index] = createFlight(index);
-      flights[index].startedAt = time + rand(1200, 5000);
+      flights[index].startedAt = time + rand(600, 2200);
     }
   });
 }
@@ -469,8 +475,12 @@ function renderBlogTree() {
         const item = document.createElement("li");
         const link = document.createElement("a");
         link.href = post.url;
-        link.target = "_blank";
-        link.rel = "noreferrer";
+        if (post.local) {
+          link.dataset.local = "true";
+        } else {
+          link.target = "_blank";
+          link.rel = "noreferrer";
+        }
         link.innerHTML = `<span class="tree-date">${post.date.slice(5)}</span><span>${post.title}</span>`;
         item.appendChild(link);
         postList.appendChild(item);
@@ -484,10 +494,48 @@ function renderBlogTree() {
   });
 }
 
+async function openLocalPost(post) {
+  try {
+    const response = await fetch(post.url);
+    if (!response.ok) {
+      throw new Error(`Failed to load ${post.url}`);
+    }
+
+    const content = await response.text();
+    currentLocalPost = post;
+    blogPanelTitle.textContent = `blog/${post.date}`;
+    blogDetailContent.innerHTML = content;
+    blogArchiveView.hidden = true;
+    blogDetailView.hidden = false;
+    blogPanelBodyScrollTop();
+  } catch (error) {
+    blogDetailContent.innerHTML = `<p>couldn't load this post right now.</p><p><code>${post.url}</code></p>`;
+    blogArchiveView.hidden = true;
+    blogDetailView.hidden = false;
+    blogPanelTitle.textContent = "blog/error";
+  }
+}
+
+function blogPanelBodyScrollTop() {
+  const body = blogDetailView.parentElement;
+  body.scrollTop = 0;
+}
+
+function showBlogArchive() {
+  currentLocalPost = null;
+  blogPanelTitle.textContent = "blog/archive";
+  blogDetailView.hidden = true;
+  blogArchiveView.hidden = false;
+  blogPanelBodyScrollTop();
+}
+
 function setBlogPanelOpen(isOpen) {
   blogPanel.classList.toggle("visible", isOpen);
   blogPanel.setAttribute("aria-hidden", String(!isOpen));
   blogToggle.setAttribute("aria-expanded", String(isOpen));
+  if (!isOpen) {
+    showBlogArchive();
+  }
 }
 
 function copyEmail(event) {
@@ -520,6 +568,20 @@ blogToggle.addEventListener("click", () => {
 });
 blogClose.addEventListener("click", () => {
   setBlogPanelOpen(false);
+});
+blogBack.addEventListener("click", () => {
+  showBlogArchive();
+});
+blogTree.addEventListener("click", (event) => {
+  const link = event.target.closest("a[data-local='true']");
+  if (!link) {
+    return;
+  }
+  event.preventDefault();
+  const post = BLOG_POSTS.find((item) => item.local && item.url === link.getAttribute("href"));
+  if (post) {
+    openLocalPost(post);
+  }
 });
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>macey: hey</title>
     <link rel="icon" href="./assets/airplane.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="./styles.css?v=chat-ui-6" />
+    <link rel="stylesheet" href="./styles.css?v=chat-ui-8" />
   </head>
   <body>
     <main class="shell">
@@ -55,17 +55,23 @@
 
       <aside class="blog-panel" id="blog-panel" aria-hidden="true">
         <div class="blog-panel-header">
-          <span>blog/archive</span>
+          <span id="blog-panel-title">blog/archive</span>
           <button type="button" id="blog-close" class="blog-close" aria-label="close blog">x</button>
         </div>
         <div class="blog-panel-body">
-          <div class="blog-tree" id="blog-tree" aria-label="Blog archive by date"></div>
+          <div class="blog-archive-view" id="blog-archive-view">
+            <div class="blog-tree" id="blog-tree" aria-label="Blog archive by date"></div>
+          </div>
+          <article class="blog-detail-view" id="blog-detail-view" hidden>
+            <button type="button" class="blog-back" id="blog-back">&larr; back</button>
+            <div class="blog-detail-content" id="blog-detail-content"></div>
+          </article>
         </div>
       </aside>
 
       <nav class="link-strip" id="link-strip" aria-label="Site links"></nav>
     </main>
 
-    <script src="./script.js?v=chat-ui-17"></script>
+    <script src="./script.js?v=chat-ui-19"></script>
   </body>
 </html>
