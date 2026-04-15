@@ -23,6 +23,7 @@ const NAV_ITEMS = [
   { label: "👁️ eyes", url: "https://macey.info/eyes" },
   { label: "🚪 doors", url: "https://macey.info/doors" },
   { label: "🖼️ mona", url: "https://docs.google.com/spreadsheets/d/1w0pJMozN3VxkUkayMVujJqXDNQjZL_XedOQKWH41jeQ/edit?usp=sharing" },
+  { label: "🦞 openclaw quick start", url: "https://gist.github.com/macebake/a83fad1a6ec8fcf96a2eb88790197e92" },
   { label: "🎹 piano", url: "https://macey.info/keyboard-piano" },
   { label: "🐺 wolves", url: "https://github.com/macebake/wolves" },
   { label: "⚔️ split-steal", url: "https://github.com/macebake/split-steal" },
@@ -352,11 +353,17 @@ function initializeChat() {
 
   const messages = document.querySelectorAll(".chat-line");
   const cursors = document.querySelectorAll(".cursor");
-  cursors.forEach((cursor, index) => {
-    if (index > 0) {
-      cursor.style.display = "none";
-    }
+  messages.forEach((message) => {
+    message.classList.remove("visible");
   });
+  cursors.forEach((cursor, index) => {
+    cursor.style.display = "none";
+  });
+
+  window.setTimeout(() => {
+    messages[0].classList.add("visible");
+    cursors[0].style.display = "inline-block";
+  }, 1000);
 
   const delays = [2000, 3000, 4000, 6000];
   const randomDelay = delays[Math.floor(Math.random() * delays.length)];
@@ -440,7 +447,7 @@ function renderBlogTree() {
   groups.forEach((yearGroup, yearIndex) => {
     const yearFolder = document.createElement("details");
     yearFolder.className = "tree-folder tree-year";
-    yearFolder.open = yearIndex === 0;
+    yearFolder.open = true;
 
     const yearSummary = document.createElement("summary");
     yearSummary.innerHTML = `<span class="tree-label">${yearGroup.year}__/</span>`;
@@ -449,7 +456,7 @@ function renderBlogTree() {
     yearGroup.months.forEach((monthGroup, monthIndex) => {
       const monthFolder = document.createElement("details");
       monthFolder.className = "tree-folder tree-month";
-      monthFolder.open = yearIndex === 0 && monthIndex < 2;
+      monthFolder.open = true;
 
       const monthSummary = document.createElement("summary");
       monthSummary.innerHTML = `<span class="tree-label">${monthLabel(monthGroup.month)}__/</span>`;
