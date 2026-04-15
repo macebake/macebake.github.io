@@ -25,6 +25,7 @@ const planeBuffer = document.createElement("canvas");
 const planeBufferContext = planeBuffer.getContext("2d", { willReadFrequently: true });
 const NAV_ITEMS = [
   { label: "🎲 die", url: "https://macey.info/die" },
+  { label: "🖐️ connect5", url: "https://connect5.co" },
   { label: "👁️ eyes", url: "https://macey.info/eyes" },
   { label: "🚪 doors", url: "https://macey.info/doors" },
   { label: "🖼️ mona", url: "https://docs.google.com/spreadsheets/d/1w0pJMozN3VxkUkayMVujJqXDNQjZL_XedOQKWH41jeQ/edit?usp=sharing" },
