@@ -3,6 +3,10 @@ const context = canvas.getContext("2d");
 const linkStrip = document.getElementById("link-strip");
 const showAllLinksCheckbox = document.getElementById("show-all-links");
 const emailLink = document.getElementById("email-link");
+const blogToggle = document.getElementById("blog-toggle");
+const blogPanel = document.getElementById("blog-panel");
+const blogTree = document.getElementById("blog-tree");
+const blogClose = document.getElementById("blog-close");
 const sourceImage = new Image();
 sourceImage.src = "./assets/compressionsky.png?v=2";
 const planeImage = new Image();
@@ -15,13 +19,29 @@ const baseBufferContext = baseBuffer.getContext("2d", { willReadFrequently: true
 const planeBuffer = document.createElement("canvas");
 const planeBufferContext = planeBuffer.getContext("2d", { willReadFrequently: true });
 const NAV_ITEMS = [
-  { label: "🎲 die", url: "https://macey.info/die", featured: true },
-  { label: "👁️ eyes", url: "https://macey.info/eyes", featured: true },
-  { label: "🚪 doors", url: "https://macey.info/doors", featured: true },
-  { label: "🖼️ mona", url: "https://docs.google.com/spreadsheets/d/1w0pJMozN3VxkUkayMVujJqXDNQjZL_XedOQKWH41jeQ/edit?usp=sharing", featured: true },
-  { label: "🎹 piano", url: "https://macey.info/keyboard-piano", featured: true },
-  { label: "🐺 wolves", url: "https://github.com/macebake/wolves", featured: false },
-  { label: "⚔️ split-steal", url: "https://github.com/macebake/split-steal", featured: false },
+  { label: "🎲 die", url: "https://macey.info/die" },
+  { label: "👁️ eyes", url: "https://macey.info/eyes" },
+  { label: "🚪 doors", url: "https://macey.info/doors" },
+  { label: "🖼️ mona", url: "https://docs.google.com/spreadsheets/d/1w0pJMozN3VxkUkayMVujJqXDNQjZL_XedOQKWH41jeQ/edit?usp=sharing" },
+  { label: "🎹 piano", url: "https://macey.info/keyboard-piano" },
+  { label: "🐺 wolves", url: "https://github.com/macebake/wolves" },
+  { label: "⚔️ split-steal", url: "https://github.com/macebake/split-steal" },
+];
+const BLOG_POSTS = [
+  { title: "OpenClaw for Dummies", url: "https://tessl.io/blog/openclaw-for-dummies/", date: "2026-03-27" },
+  { title: "Stop prompt hacking", url: "https://tessl.io/blog/stop-prompt-hacking/", date: "2026-03-19" },
+  { title: "Passing tests are not enough", url: "https://tessl.io/blog/passing-tests-are-not-enough/", date: "2026-03-12" },
+  { title: "Skills to avoid common failure patterns: For agents, by an agent", url: "https://tessl.io/blog/skills-for-agents-by-an-agent/", date: "2026-03-11" },
+  { title: "From 68% to 100%: Optimizing Skills With a Single Command", url: "https://tessl.io/blog/optimizing-skills-with-a-single-command/", date: "2026-02-26" },
+  { title: "Three Context Eval Methodologies at Tessl - Skill Review, Task and Repo evals", url: "https://tessl.io/blog/three-context-eval-methodologies/", date: "2026-02-13" },
+  { title: "Getting creative with agent skills", url: "https://tessl.io/blog/getting-creative-with-agent-skills/", date: "2026-02-06" },
+  { title: "Fixing API Misuse: How Tessl Improves Agent Accuracy by up to 3.3X", url: "https://tessl.io/blog/fixing-api-misuse-how-tessl-improves-agent-accuracy-by-up-to-33x/", date: "2026-01-22" },
+  { title: "If agents use your tool, you need evals", url: "https://tessl.io/blog/why-you-need-evals/", date: "2026-01-21" },
+  { title: "That's Not Agentic", url: "https://tessl.io/blog/thats-not-agentic/", date: "2026-01-19" },
+  { title: "How to Capture Intent when Coding with Agents", url: "https://tessl.io/blog/how-to-capture-intent-with-coding-agents/", date: "2025-10-24" },
+  { title: "Task Framing: No need to beg!", url: "https://tessl.io/blog/task-framing-no-need-to-beg/", date: "2025-09-14" },
+  { title: "Botfooding: Can an LLM give good user feedback?", url: "https://tessl.io/blog/botfooding-can-an-llm-give-good-user-feedback/", date: "2025-08-18" },
+  { title: "Teaching MCP Servers New Tricks: Challenges in Tool Discovery", url: "https://tessl.io/blog/teaching-mcp-servers-new-tricks/", date: "2025-07-02" },
 ];
 const flights = [];
 const FLIGHT_COUNT = NAV_ITEMS.length;
@@ -379,6 +399,90 @@ function renderLinks() {
   });
 }
 
+function groupBlogPosts() {
+  const grouped = new Map();
+
+  BLOG_POSTS.forEach((post) => {
+    const [year, month] = post.date.split("-");
+    if (!grouped.has(year)) {
+      grouped.set(year, new Map());
+    }
+    const months = grouped.get(year);
+    if (!months.has(month)) {
+      months.set(month, []);
+    }
+    months.get(month).push(post);
+  });
+
+  return Array.from(grouped.entries())
+    .sort((a, b) => Number(b[0]) - Number(a[0]))
+    .map(([year, months]) => ({
+      year,
+      months: Array.from(months.entries())
+        .sort((a, b) => Number(b[0]) - Number(a[0]))
+        .map(([month, posts]) => ({
+          month,
+          posts: posts.sort((a, b) => b.date.localeCompare(a.date)),
+        })),
+    }));
+}
+
+function monthLabel(month) {
+  return new Intl.DateTimeFormat("en-GB", { month: "short" })
+    .format(new Date(`2000-${month}-01`))
+    .toLowerCase();
+}
+
+function renderBlogTree() {
+  const groups = groupBlogPosts();
+  blogTree.innerHTML = "";
+
+  groups.forEach((yearGroup, yearIndex) => {
+    const yearFolder = document.createElement("details");
+    yearFolder.className = "tree-folder tree-year";
+    yearFolder.open = yearIndex === 0;
+
+    const yearSummary = document.createElement("summary");
+    yearSummary.innerHTML = `<span class="tree-label">${yearGroup.year}__/</span>`;
+    yearFolder.appendChild(yearSummary);
+
+    yearGroup.months.forEach((monthGroup, monthIndex) => {
+      const monthFolder = document.createElement("details");
+      monthFolder.className = "tree-folder tree-month";
+      monthFolder.open = yearIndex === 0 && monthIndex < 2;
+
+      const monthSummary = document.createElement("summary");
+      monthSummary.innerHTML = `<span class="tree-label">${monthLabel(monthGroup.month)}__/</span>`;
+      monthFolder.appendChild(monthSummary);
+
+      const postList = document.createElement("ul");
+      postList.className = "tree-posts";
+
+      monthGroup.posts.forEach((post) => {
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = post.url;
+        link.target = "_blank";
+        link.rel = "noreferrer";
+        link.innerHTML = `<span class="tree-date">${post.date.slice(5)}</span><span>${post.title}</span>`;
+        item.appendChild(link);
+        postList.appendChild(item);
+      });
+
+      monthFolder.appendChild(postList);
+      yearFolder.appendChild(monthFolder);
+    });
+
+    blogTree.appendChild(yearFolder);
+  });
+}
+
+function setBlogPanelOpen(isOpen) {
+  blogPanel.classList.toggle("visible", isOpen);
+  blogPanel.setAttribute("aria-hidden", String(!isOpen));
+  blogToggle.setAttribute("aria-expanded", String(isOpen));
+}
+
 function copyEmail(event) {
   event.preventDefault();
   navigator.clipboard.writeText("macebake@gmail.com");
@@ -401,8 +505,20 @@ startIfReady();
 window.addEventListener("resize", resizeCanvas);
 initializeChat();
 renderLinks();
+renderBlogTree();
 showAllLinksCheckbox.addEventListener("change", renderLinks);
 emailLink.addEventListener("click", copyEmail);
+blogToggle.addEventListener("click", () => {
+  setBlogPanelOpen(!blogPanel.classList.contains("visible"));
+});
+blogClose.addEventListener("click", () => {
+  setBlogPanelOpen(false);
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    setBlogPanelOpen(false);
+  }
+});
 canvas.addEventListener("mousemove", (event) => {
   const target = hitFlight(getCanvasPoint(event));
   hoveredFlightIndex = target ? target.index : -1;

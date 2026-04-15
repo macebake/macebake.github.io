@@ -1,0 +1,118 @@
+:root {
+  color-scheme: only light;
+  --bg-top: #8db3da;
+  --bg-bottom: #d9eefc;
+  --panel: rgba(18, 34, 58, 0.28);
+  --panel-border: rgba(223, 237, 255, 0.24);
+  --text-main: #f4f8ff;
+  --text-dim: rgba(244, 248, 255, 0.68);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  padding: 1.2rem;
+  background:
+    radial-gradient(circle at top left, rgba(255, 246, 221, 0.22), transparent 18%),
+    linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+  color: var(--text-main);
+  font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.page {
+  width: min(54rem, 100%);
+  margin: 0 auto;
+  padding: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(6px);
+}
+
+.masthead {
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow,
+.group-label,
+.post-date {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.masthead h1 {
+  margin: 0.2rem 0 0;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  line-height: 0.95;
+  font-weight: 400;
+}
+
+.subhead {
+  margin: 0.6rem 0 0;
+  color: var(--text-dim);
+}
+
+.back-link,
+.post-list a {
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 0.8rem;
+}
+
+.archive-group + .archive-group {
+  margin-top: 1.4rem;
+}
+
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.55rem 0 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.post-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: baseline;
+  padding-top: 0.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.post-date {
+  min-width: 7rem;
+}
+
+.post-list a:hover,
+.back-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 0.8rem;
+  }
+
+  .page {
+    padding: 0.9rem;
+  }
+
+  .post-list li {
+    gap: 0.3rem;
+  }
+}

@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Skywatch '98</title>
-    <link rel="stylesheet" href="./styles.css?v=chat-ui-3" />
+    <title>macey: hey</title>
+    <link rel="icon" href="./assets/airplane.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./styles.css?v=chat-ui-6" />
   </head>
   <body>
     <main class="shell">
@@ -42,6 +43,7 @@
             <a href="#" id="email-link" aria-label="email">
               <img src="./assets/ui/email.svg" alt="" />
             </a>
+            <button type="button" id="blog-toggle" class="blog-toggle" aria-expanded="false">blog</button>
           </div>
 
           <label class="toggle-row" for="show-all-links">
@@ -51,9 +53,19 @@
         </div>
       </section>
 
+      <aside class="blog-panel" id="blog-panel" aria-hidden="true">
+        <div class="blog-panel-header">
+          <span>blog/archive</span>
+          <button type="button" id="blog-close" class="blog-close" aria-label="close blog">x</button>
+        </div>
+        <div class="blog-panel-body">
+          <div class="blog-tree" id="blog-tree" aria-label="Blog archive by date"></div>
+        </div>
+      </aside>
+
       <nav class="link-strip" id="link-strip" aria-label="Site links"></nav>
     </main>
 
-    <script src="./script.js?v=chat-ui-13"></script>
+    <script src="./script.js?v=chat-ui-16"></script>
   </body>
 </html>
