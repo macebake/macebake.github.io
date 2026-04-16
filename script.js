@@ -2,7 +2,6 @@ const canvas = document.getElementById("sky-canvas");
 const context = canvas.getContext("2d");
 const linkStrip = document.getElementById("link-strip");
 const showAllLinksCheckbox = document.getElementById("show-all-links");
-const emailLink = document.getElementById("email-link");
 const blogToggle = document.getElementById("blog-toggle");
 const blogPanel = document.getElementById("blog-panel");
 const blogPanelTitle = document.getElementById("blog-panel-title");
@@ -539,11 +538,6 @@ function setBlogPanelOpen(isOpen) {
   }
 }
 
-function copyEmail(event) {
-  event.preventDefault();
-  navigator.clipboard.writeText("macebake@gmail.com");
-}
-
 function startIfReady() {
   if (started || !sourceImage.complete || !planeImage.complete) {
     return;
@@ -563,7 +557,6 @@ initializeChat();
 renderLinks();
 renderBlogTree();
 showAllLinksCheckbox.addEventListener("change", renderLinks);
-emailLink.addEventListener("click", copyEmail);
 blogToggle.addEventListener("click", () => {
   setBlogPanelOpen(!blogPanel.classList.contains("visible"));
 });
