@@ -599,3 +599,13 @@ canvas.addEventListener("click", (event) => {
     window.open(target.url, "_blank", "noopener,noreferrer");
   }
 });
+
+document.getElementById("email-copy").addEventListener("click", () => {
+  navigator.clipboard.writeText("hi@macey.info").then(() => {
+    const btn = document.getElementById("email-copy");
+    btn.classList.add("did-copy");
+    window.setTimeout(() => {
+      btn.classList.remove("did-copy");
+    }, 2000);
+  });
+});
