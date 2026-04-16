@@ -26,6 +26,11 @@ body {
   overflow: hidden;
 }
 
+body.mobile-mode {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .shell {
   position: relative;
   min-height: 100vh;
@@ -111,6 +116,66 @@ body {
     0 16px 40px rgba(5, 16, 28, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(6px);
+}
+
+.mobile-stack {
+  display: none;
+}
+
+.mobile-panel {
+  color: var(--text-main);
+  background: rgba(18, 34, 58, 0.3);
+  border: 1px solid var(--panel-border);
+  box-shadow:
+    0 16px 40px rgba(5, 16, 28, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  padding: 0.85rem 0.95rem 0.9rem;
+}
+
+.mobile-label {
+  margin: 0 0 0.7rem;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.mobile-link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mobile-link-list a {
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 0.26rem 0.46rem;
+  background: rgba(244, 248, 255, 0.16);
+  border: 1px solid rgba(244, 248, 255, 0.18);
+  border-radius: 2px;
+}
+
+.mobile-blog-toggle > summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 12px;
+}
+
+.mobile-blog-toggle > summary::-webkit-details-marker {
+  display: none;
+}
+
+.mobile-blog-toggle > summary::before {
+  content: "+ ";
+  color: var(--text-dim);
+}
+
+.mobile-blog-toggle[open] > summary::before {
+  content: "- ";
+}
+
+.mobile-blog-tree {
+  margin-top: 0.8rem;
 }
 
 .blog-panel {
@@ -533,21 +598,46 @@ body {
 }
 
 @media (max-width: 700px) {
-  .ui-panel {
-    width: calc(100vw - 1.5rem);
-    bottom: 4.5rem;
+  body.mobile-mode .shell {
+    min-height: 100vh;
+    padding: 0.85rem 0.75rem 1rem;
   }
 
-  .blog-panel {
-    right: 0.75rem;
-    left: 0.75rem;
-    width: auto;
-    bottom: 11rem;
-    height: min(22rem, calc(100vh - 13rem));
+  body.mobile-mode .blog-panel,
+  body.mobile-mode .link-strip {
+    display: none;
   }
 
-  .controls-row {
+  body.mobile-mode .ui-panel,
+  body.mobile-mode .mobile-stack {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: none;
+  }
+
+  body.mobile-mode .ui-panel {
+    margin-bottom: 0.8rem;
+  }
+
+  body.mobile-mode .mobile-stack {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  body.mobile-mode .controls-row {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  body.mobile-mode .toggle-row,
+  body.mobile-mode .blog-toggle {
+    display: none;
+  }
+
+  body.mobile-mode .cursor {
+    display: none !important;
   }
 }

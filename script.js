@@ -11,6 +11,8 @@ const blogDetailView = document.getElementById("blog-detail-view");
 const blogDetailContent = document.getElementById("blog-detail-content");
 const blogClose = document.getElementById("blog-close");
 const blogBack = document.getElementById("blog-back");
+const mobileLinkList = document.getElementById("mobile-link-list");
+const mobileBlogTree = document.getElementById("mobile-blog-tree");
 const sourceImage = new Image();
 sourceImage.src = "./assets/compressionsky.png?v=2";
 const planeImage = new Image();
@@ -59,6 +61,8 @@ let paused = false;
 let hoveredFlightIndex = -1;
 let renderedFlights = [];
 let currentLocalPost = null;
+let mobileMode = false;
+let animationFrameId = 0;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -70,6 +74,10 @@ function resizeCanvas() {
   buffer.height = targetHeight;
   baseBuffer.width = targetWidth;
   baseBuffer.height = targetHeight;
+}
+
+function isMobileLayout() {
+  return window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
 }
 
 function rand(min, max) {
@@ -315,8 +323,7 @@ function animate(time) {
   lastFrameStamp = time;
 
   renderSky(simulationTime);
-
-  requestAnimationFrame(animate);
+  animationFrameId = requestAnimationFrame(animate);
 }
 
 function getCanvasPoint(event) {
@@ -362,7 +369,7 @@ function initializeChat() {
   messages.forEach((message) => {
     message.classList.remove("visible");
   });
-  cursors.forEach((cursor, index) => {
+  cursors.forEach((cursor) => {
     cursor.style.display = "none";
   });
 
@@ -383,8 +390,8 @@ function initializeChat() {
       showTypingIndicator(900);
       window.setTimeout(() => {
         document.getElementById("typing-indicator").classList.remove("visible");
-        cursors[index - 1].style.display = "none";
         message.classList.add("visible");
+        cursors[index - 1].style.display = "none";
         cursors[index].style.display = "inline-block";
       }, 1000);
     }, index * randomDelay);
@@ -409,6 +416,19 @@ function renderLinks() {
     anchor.target = "_blank";
     anchor.rel = "noreferrer";
     linkStrip.appendChild(anchor);
+  });
+}
+
+function renderMobileLinks() {
+  mobileLinkList.innerHTML = "";
+
+  NAV_ITEMS.forEach((item) => {
+    const anchor = document.createElement("a");
+    anchor.href = item.url;
+    anchor.textContent = item.label;
+    anchor.target = "_blank";
+    anchor.rel = "noreferrer";
+    mobileLinkList.appendChild(anchor);
   });
 }
 
@@ -446,23 +466,24 @@ function monthLabel(month) {
     .toLowerCase();
 }
 
-function renderBlogTree() {
+function renderBlogTreeInto(container, options = {}) {
+  const { expandAll = true } = options;
   const groups = groupBlogPosts();
-  blogTree.innerHTML = "";
+  container.innerHTML = "";
 
-  groups.forEach((yearGroup, yearIndex) => {
+  groups.forEach((yearGroup) => {
     const yearFolder = document.createElement("details");
     yearFolder.className = "tree-folder tree-year";
-    yearFolder.open = true;
+    yearFolder.open = expandAll;
 
     const yearSummary = document.createElement("summary");
     yearSummary.innerHTML = `<span class="tree-label">${yearGroup.year}__/</span>`;
     yearFolder.appendChild(yearSummary);
 
-    yearGroup.months.forEach((monthGroup, monthIndex) => {
+    yearGroup.months.forEach((monthGroup) => {
       const monthFolder = document.createElement("details");
       monthFolder.className = "tree-folder tree-month";
-      monthFolder.open = true;
+      monthFolder.open = expandAll;
 
       const monthSummary = document.createElement("summary");
       monthSummary.innerHTML = `<span class="tree-label">${monthLabel(monthGroup.month)}__/</span>`;
@@ -490,8 +511,13 @@ function renderBlogTree() {
       yearFolder.appendChild(monthFolder);
     });
 
-    blogTree.appendChild(yearFolder);
+    container.appendChild(yearFolder);
   });
+}
+
+function renderBlogTree() {
+  renderBlogTreeInto(blogTree, { expandAll: true });
+  renderBlogTreeInto(mobileBlogTree, { expandAll: false });
 }
 
 async function openLocalPost(post) {
@@ -538,13 +564,34 @@ function setBlogPanelOpen(isOpen) {
   }
 }
 
+function syncLayoutMode() {
+  mobileMode = isMobileLayout();
+  document.body.classList.toggle("mobile-mode", mobileMode);
+  if (mobileMode) {
+    setBlogPanelOpen(false);
+  }
+  if (sourceImage.complete && planeImage.complete && !animationFrameId) {
+    lastFrameStamp = 0;
+    if (simulationTime < 12000) {
+      simulationTime = 12000;
+    }
+    animationFrameId = requestAnimationFrame(animate);
+  }
+}
+
 function startIfReady() {
   if (started || !sourceImage.complete || !planeImage.complete) {
     return;
   }
   started = true;
   resizeCanvas();
-  requestAnimationFrame(animate);
+  syncLayoutMode();
+  if (!animationFrameId) {
+    if (simulationTime < 12000) {
+      simulationTime = 12000;
+    }
+    animationFrameId = requestAnimationFrame(animate);
+  }
 }
 
 sourceImage.addEventListener("load", startIfReady);
@@ -552,9 +599,13 @@ planeImage.addEventListener("load", startIfReady);
 
 resizeCanvas();
 startIfReady();
-window.addEventListener("resize", resizeCanvas);
+window.addEventListener("resize", () => {
+  resizeCanvas();
+  syncLayoutMode();
+});
 initializeChat();
 renderLinks();
+renderMobileLinks();
 renderBlogTree();
 showAllLinksCheckbox.addEventListener("change", renderLinks);
 blogToggle.addEventListener("click", () => {
@@ -583,17 +634,26 @@ document.addEventListener("keydown", (event) => {
   }
 });
 canvas.addEventListener("mousemove", (event) => {
+  if (mobileMode) {
+    return;
+  }
   const target = hitFlight(getCanvasPoint(event));
   hoveredFlightIndex = target ? target.index : -1;
   paused = hoveredFlightIndex !== -1;
   canvas.style.cursor = target ? "pointer" : "default";
 });
 canvas.addEventListener("mouseleave", () => {
+  if (mobileMode) {
+    return;
+  }
   hoveredFlightIndex = -1;
   paused = false;
   canvas.style.cursor = "default";
 });
 canvas.addEventListener("click", (event) => {
+  if (mobileMode) {
+    return;
+  }
   const target = hitFlight(getCanvasPoint(event));
   if (target) {
     window.open(target.url, "_blank", "noopener,noreferrer");
